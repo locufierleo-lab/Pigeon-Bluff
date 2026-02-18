@@ -1,0 +1,12 @@
+[
+  { "id": "q1", "question": "Capitale de l'Espagne ?", "answer": "Madrid" },
+  { "id": "q2", "question": "Combien font 7 × 8 ?", "answer": "56" },
+  { "id": "q3", "question": "Planète la plus proche du Soleil ?", "answer": "Mercure" },
+  { "id": "q4", "question": "Auteur de 'Les Misérables' ?", "answer": "Victor Hugo" },
+  { "id": "q5", "question": "Monnaie du Japon ?", "answer": "Yen" },
+  { "id": "q6", "question": "Plus grand océan ?", "answer": "Pacifique" },
+  { "id": "q7", "question": "Couleur du mélange bleu + jaune ?", "answer": "Vert" },
+  { "id": "q8", "question": "Année du premier pas sur la Lune ?", "answer": "1969" },
+  { "id": "q9", "question": "Élément chimique O ?", "answer": "Oxygène" },
+  { "id": "q10", "question": "Langue officielle du Brésil ?", "answer": "Portugais" }
+]
