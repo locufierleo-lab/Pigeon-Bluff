@@ -57,6 +57,7 @@ export type GameState = {
   gameId: string;
   phase: Phase;
   seed: string;
+  lastSeq?: number;
   players: [Player, Player];
   config: {
     startingCapital: number;

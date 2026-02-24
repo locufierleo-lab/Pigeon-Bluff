@@ -9,42 +9,65 @@ import {
 } from './rules';
 
 export type GameAction =
-  | { type: 'START_ROUND'; payload: { stakeByPlayer: Record<string, number> } }
-  | { type: 'SET_VOTES'; payload: { votes: Vote[] } }
-  | { type: 'RESOLVE_ROUND' }
+  | { type: 'START_ROUND'; seq: number; payload: { stakeByPlayer: Record<string, number> } }
+  | { type: 'SET_VOTES'; seq: number; payload: { votes: Vote[] } }
+  | { type: 'RESOLVE_ROUND'; seq: number }
   | {
       type: 'APPLY_REDISTRIBUTION';
+      seq: number;
       payload: {
         byPlayerId: string;
         amount: number;
         distributionMap: Record<string, number>;
       };
     }
-  | { type: 'RESOLVE_REDISTRIBUTION' }
-  | { type: 'ADVANCE_AFTER_SET_END' }
-  | { type: 'RESET_MATCH'; payload: CreateGameInput };
+  | { type: 'RESOLVE_REDISTRIBUTION'; seq: number }
+  | { type: 'ADVANCE_AFTER_SET_END'; seq: number }
+  | { type: 'RESET_MATCH'; seq: number; payload: CreateGameInput };
 
 export function createInitialGameState(input: CreateGameInput): GameState {
-  return createGameState(input);
+  return {
+    ...createGameState(input),
+    lastSeq: 0,
+  };
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
+  const lastSeq = state.lastSeq ?? 0;
+  if (action.seq !== lastSeq + 1) {
+    return state;
+  }
+
+  let nextState: GameState;
+
   switch (action.type) {
     case 'START_ROUND':
-      return startRound(state, action.payload);
+      nextState = startRound(state, action.payload);
+      break;
     case 'SET_VOTES':
-      return setVotes(state, action.payload.votes);
+      nextState = setVotes(state, action.payload.votes);
+      break;
     case 'RESOLVE_ROUND':
-      return applyResolveRound(state);
+      nextState = applyResolveRound(state);
+      break;
     case 'APPLY_REDISTRIBUTION':
-      return applyRedistribution(state, action.payload);
+      nextState = applyRedistribution(state, action.payload);
+      break;
     case 'RESOLVE_REDISTRIBUTION':
-      return resolveRedistribution(state);
+      nextState = resolveRedistribution(state);
+      break;
     case 'ADVANCE_AFTER_SET_END':
-      return state.phase === 'SET_END' ? { ...state, phase: 'AUTHOR' } : state;
+      nextState = state.phase === 'SET_END' ? { ...state, phase: 'AUTHOR' } : state;
+      break;
     case 'RESET_MATCH':
-      return createGameState(action.payload);
+      nextState = createGameState(action.payload);
+      break;
     default:
       return state;
   }
+
+  return {
+    ...nextState,
+    lastSeq: lastSeq + 1,
+  };
 }
